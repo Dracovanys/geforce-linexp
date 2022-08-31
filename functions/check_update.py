@@ -19,41 +19,37 @@ def ping_nvidia_website():
         return "ERROR"
 
 def get_graphicCard_data():
-    try:
-        if ping_nvidia_website() == "OK":
-            print("Updating Graphic Cards database...", end="")
-            graphicCard_website = BeautifulSoup(requests.get("https://www.nvidia.com/").text, "html.parser")            
+    if ping_nvidia_website() == "OK":
+        print("Updating Graphic Cards database...", end="")
+        graphicCard_website = BeautifulSoup(requests.get("https://www.nvidia.com/").text, "html.parser")            
 
-            # Find path to download driver page
-            for link in graphicCard_website.find_all("a"):
-                if str(link).find("/Download/") != -1:
-                    downloadPath_website = str(link.get("href"))
-                    break
-                elif link == graphicCard_website.find_all("a")[-1]:
-                    raise Exception
-            
-            browser = webdriver.Firefox()
-            browser.get(downloadPath_website)
+        # Find path to download driver page
+        for link in graphicCard_website.find_all("a"):
+            if str(link).find("/Download/") != -1:
+                downloadPath_website = str(link.get("href"))
+                break
+            elif link == graphicCard_website.find_all("a")[-1]:
+                print("ERROR")
+        
+        browser = webdriver.Firefox()
+        browser.get(downloadPath_website)
 
-            productSeriesType_list = browser.find_element(By.XPATH, "//select[@name='selProductSeriesType']").find_elements(By.TAG_NAME, "option")
-            for pST_option in productSeriesType_list:            
-                pST_option.click()
-                productSeries_list = browser.find_element(By.XPATH, "//select[@name='selProductSeries']").find_elements(By.TAG_NAME, "option")
-                for pS_option in productSeries_list:
-                    print(pST_option.get_attribute("text") + "/" + pS_option.get_attribute("text"))
-                
-
-            
-            browser.close()
-
-            
-        else:
-            raise Exception
-    except:
+        productSeriesType_list = browser.find_element(By.XPATH, "//select[@name='selProductSeriesType']").find_elements(By.TAG_NAME, "option")
+        for pST_option in productSeriesType_list:                
+            pST_option.click()
+            productSeries_list = browser.find_element(By.XPATH, "//select[@name='selProductSeries']").find_elements(By.TAG_NAME, "option")
+            for pS_option in productSeries_list:
+                if pS_option.get_attribute("class") != "psLess" and pS_option.get_attribute("class") != "psBothHead" and pS_option.get_attribute("class") != "psAll":
+                    pS_option.click()
+                    if browser.find_element(By.XPATH, "//tr[@id='trProductFamily']").get_attribute("style") != "display: none;":
+                        productFamily_list = browser.find_element(By.XPATH, "//select[@name='selProductFamily']").find_elements(By.TAG_NAME, "option")
+                        for pF_option in productFamily_list:
+                            print(pST_option.get_attribute("text").strip() + "/" + pS_option.get_attribute("text").strip() + "/" + pF_option.get_attribute("text").strip())
+                    else:
+                        print(pST_option.get_attribute("text").strip() + "/" + pS_option.get_attribute("text").strip())
+        browser.close()        
+    else:
         print("ERROR")
-        return "ERROR"
-        
-        
 
 get_graphicCard_data()
 
