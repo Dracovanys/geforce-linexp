@@ -17,30 +17,34 @@ def get_graphicCard():
     gpu = igpu.get_device(0)
     return gpu.name.strip().strip("NVIDIA ")
 
-def find_graphicCardDriver_noSaveData():
-    graphicCard = get_graphicCard()
-
+def get_driverDownloadPage():
     graphicCard_website = BeautifulSoup(requests.get("https://www.nvidia.com/").text, "html.parser")            
 
     # Find path to download driver page
     for link in graphicCard_website.find_all("a"):
         if str(link).find("/Download/") != -1:
-            downloadPath_website = str(link.get("href"))
-            break
+            return str(link.get("href"))
         elif link == graphicCard_website.find_all("a")[-1]:
             print("ERROR")
+
+def find_graphicCardDriver_noSaveData():
+    graphicCard = get_graphicCard()    
     
     browser = webdriver.Firefox()
-    browser.get(downloadPath_website)
+    browser.get(get_driverDownloadPage())
 
-    # Searching for user's graphic card 
+    # Navigating through GC Series Type
     productSeriesType_list = browser.find_element(By.XPATH, "//select[@name='selProductSeriesType']").find_elements(By.TAG_NAME, "option")
     for pST_option in productSeriesType_list:                
         pST_option.click()
+
+        # Navigating through GC Series
         productSeries_list = browser.find_element(By.XPATH, "//select[@name='selProductSeries']").find_elements(By.TAG_NAME, "option")
         for pS_option in productSeries_list:
             if pS_option.get_attribute("class") != "psLess" and pS_option.get_attribute("class") != "psBothHead" and pS_option.get_attribute("class") != "psAll":
                 pS_option.click()
+
+                # Navigating through GC Family
                 if browser.find_element(By.XPATH, "//tr[@id='trProductFamily']").is_displayed():
                     productFamily_list = browser.find_element(By.XPATH, "//select[@name='selProductFamily']").find_elements(By.TAG_NAME, "option")
                     for pF_option in productFamily_list:
@@ -49,7 +53,7 @@ def find_graphicCardDriver_noSaveData():
                         if pF_option.get_attribute("text").strip() == graphicCard:
                             pF_option.click()
                             for operationSys in browser.find_element(By.XPATH, "//select[@id='selOperatingSystem']").find_elements(By.TAG_NAME, "option"):
-                                if operationSys.get_attribute("text").strip().find("Linux 64") != -1:
+                                if operationSys.get_attribute("text").strip() == "Linux 64-bit":
                                     operationSys.click()
                             browser.find_element(By.XPATH, "//a[@href='javascript: GetDriver();']").click()
                             browser.find_element(By.XPATH, "//a[@id='lnkDwnldBtn']").click()
@@ -59,8 +63,6 @@ def find_graphicCardDriver_noSaveData():
                             return
                 else:
                     print(pST_option.get_attribute("text").strip() + "/" + pS_option.get_attribute("text").strip())
-    # browser.close()
-
-find_graphicCardDriver_noSaveData()
-
-
+                    browser.close()
+                    return
+    
