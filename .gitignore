@@ -2,3 +2,4 @@ functions/geckodriver.log
 functions/__pycache__/*
 geckodriver.log
 data/*
+downloads/*
