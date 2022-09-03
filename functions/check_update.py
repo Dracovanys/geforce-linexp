@@ -5,15 +5,20 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 import igpu
+import os
+import json
 
 class graphicCard:
     def __init__(self):
         gpu = igpu.get_device(0)
         self.family = gpu.name.strip().strip("NVIDIA ")
         self.curVersion = ""
+        self.newDriverPath = ""
 
         for num in igpu.nvidia_driver_version():
-            self.curVersion += str(num)
+            if len(self.curVersion) < 1:
+                self.curVersion += str(num)
+            else: self.curVersion += f".{str(num)}"
 
 def ping_nvidia_website():
     pingResult = ping("www.nvidia.com")
@@ -57,6 +62,10 @@ def find_graphicCardDriver_noSaveData():
                         # Specific graphic card
                         if pF_option.get_attribute("text").strip() == gCard.family:
                             pF_option.click()
+
+                            # Saving Graphic Card path
+                            saveGraphicCard_path(pST_option.get_attribute("text"), pS_option.get_attribute("text"), pF_option.get_attribute("text"))
+
                             driver_availableToLinux = False
                             for operationSys in browser.find_element(By.XPATH, "//select[@id='selOperatingSystem']").find_elements(By.TAG_NAME, "option"):
                                 if operationSys.get_attribute("text").strip() == "Linux 64-bit":
@@ -64,11 +73,35 @@ def find_graphicCardDriver_noSaveData():
                                     operationSys.click()
                             if driver_availableToLinux:
                                 browser.find_element(By.XPATH, "//a[@href='javascript: GetDriver();']").click()
-                                driverVersion = browser.find_element(By.XPATH, "//td[@id='tdVersion']").text.strip(" .")
+                                driverVersion = browser.find_element(By.XPATH, "//td[@id='tdVersion']").text.strip(".")
                                 browser.find_element(By.XPATH, "//a[@id='lnkDwnldBtn']").click()
                                 newDriver_path = browser.current_url
                                 browser.close()
-                                return newDriver_path + " " + driverVersion[:6] + " " + gCard.curVersion
+
+                                # Comparing installed NVIDIA driver version with website's NVIDIA driver version
+                                if driverVersion[:7] == gCard.curVersion:
+                                    return "up-to-date"
+                                else:
+                                    gCard.newDriverPath = newDriver_path
+                                    return gCard
                             else:
                                 browser.close()
-                                return "No Linux driver"
+                                return "no-linux-driver"
+
+def saveGraphicCard_path(pSeriesType, pSeries, pFamily):
+    root = os.getcwd()[:os.getcwd().find("/geforce") + 15]
+
+    if not os.path.exists(root + "/data"):
+        os.mkdir(root + "/data")
+
+    graphicCard_info = {
+        "seriesType" : pSeriesType,
+        "series" : pSeries,
+        "family" : pFamily
+    }
+
+    graphicCard_info_json = json.dumps(graphicCard_info, indent=3)
+
+
+    with open(root + "/data/gCard.json", "w") as jsonFile:
+        jsonFile.write(graphicCard_info_json)
