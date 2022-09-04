@@ -47,9 +47,9 @@ During this process, GeForce Linexp should give the following (not exactly) resp
 
 ### Update driver module
 
- - [ ] Detect user's NVIDIA Graphic Card and search for new drivers to it.
-	 - [ ] Store user's NVIDIA Graphic Card information to improve verification time on next executions.
- - [ ] Download and install new drivers for user's NVIDIA Graphic Card.
+ - [x] Detect user's NVIDIA Graphic Card and search for new drivers to it.
+	 - [x] Store user's NVIDIA Graphic Card information to improve verification time on next executions.
+ - [x] Download and install new drivers for user's NVIDIA Graphic Card.
  - [ ] Present a visual UI to provides a friendly use of the tool.
  - [ ] Run tool as a service to automatically search for new drivers.
 
