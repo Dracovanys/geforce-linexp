@@ -23,11 +23,17 @@ class graphicCard:
             else: self.curVersion += f".{str(num)}"
 
 def ping_nvidia_website():
-    pingResult = ping("www.nvidia.com")
-    if pingResult == None or pingResult == False:
-        print("ERROR")
-    else:
-        print("OK")
+    try:
+        pingResult = ping("www.nvidia.com")
+        if pingResult == None or pingResult == False:
+            print("[FAILURE] Checking connection with NVIDIA official website")
+            quit()
+        else:
+            print("[SUCCESS] Checking connection with NVIDIA official website")
+            return
+    except:
+        print("[FAILURE] Checking connection with NVIDIA official website")
+        quit()
 
 def get_driverDownloadPage():
     graphicCard_website = BeautifulSoup(requests.get("https://www.nvidia.com/").text, "html.parser")            
@@ -44,66 +50,80 @@ def start_browser():
     options.add_argument('--headless')
     browser = webdriver.Firefox(options=options)
     browser.get(get_driverDownloadPage())
-    print("OK")
     return browser
 
 def find_graphicCardDriver(browser: webdriver.Firefox):
-    root = os.getcwd()[:os.getcwd().find("/geforce") + 15]
+    try:
+        root = os.getcwd()[:os.getcwd().find("/geforce") + 15]
 
-    gCard = graphicCard()
+        gCard = graphicCard()
 
-    with open(root + "/data/gCard.json", "r") as gCard_jsonFile:
-        gCard_json = json.load(gCard_jsonFile)
+        with open(root + "/data/gCard.json", "r") as gCard_jsonFile:
+            gCard_json = json.load(gCard_jsonFile)
 
-    # Selecting GC Series Type
-    for pST_option in browser.find_element(By.XPATH, "//select[@name='selProductSeriesType']").find_elements(By.TAG_NAME, "option"):
-        if pST_option.get_attribute("text") == gCard_json["seriesType"]:
-            pST_option.click()
-            break
-    
-    # Selecting GC Series
-    for pS_option in browser.find_element(By.XPATH, "//select[@name='selProductSeries']").find_elements(By.TAG_NAME, "option"):
-        if pS_option.get_attribute("text") == gCard_json["series"]:
-            pS_option.click()
-            break
-    
-    # Selecting GC Family
-    for pF_option in browser.find_element(By.XPATH, "//select[@name='selProductFamily']").find_elements(By.TAG_NAME, "option"):
-        if pF_option.get_attribute("text") == gCard_json["family"]:
-            pF_option.click()
-            break
+        # Selecting GC Series Type
+        for pST_option in browser.find_element(By.XPATH, "//select[@name='selProductSeriesType']").find_elements(By.TAG_NAME, "option"):
+            if pST_option.get_attribute("text") == gCard_json["seriesType"]:
+                pST_option.click()
+                break
+        
+        # Selecting GC Series
+        for pS_option in browser.find_element(By.XPATH, "//select[@name='selProductSeries']").find_elements(By.TAG_NAME, "option"):
+            if pS_option.get_attribute("text") == gCard_json["series"]:
+                pS_option.click()
+                break
+        
+        # Selecting GC Family
+        for pF_option in browser.find_element(By.XPATH, "//select[@name='selProductFamily']").find_elements(By.TAG_NAME, "option"):
+            if pF_option.get_attribute("text") == gCard_json["family"]:
+                pF_option.click()
+                break
 
-    gCard = get_newDriver(browser, gCard)
-    return gCard
+        gCard = get_newDriver(browser, gCard)
+
+        print("[SUCCESS] Looking for new drivers to your NVIDIA graphic card")
+        return gCard
+    except:
+        print("[FAILURE] Looking for new drivers to your NVIDIA graphic card")
+        quit()
 
 def find_graphicCardDriver_noSaveData(browser: webdriver.Firefox):
-    gCard = graphicCard()
+    try:
+        gCard = graphicCard()
 
-    # Navigating through GC Series Type
-    productSeriesType_list = browser.find_element(By.XPATH, "//select[@name='selProductSeriesType']").find_elements(By.TAG_NAME, "option")
-    for pST_option in productSeriesType_list:                
-        pST_option.click()
+        # Navigating through GC Series Type
+        productSeriesType_list = browser.find_element(By.XPATH, "//select[@name='selProductSeriesType']").find_elements(By.TAG_NAME, "option")
+        for pST_option in productSeriesType_list:                
+            pST_option.click()
 
-        # Navigating through GC Series
-        productSeries_list = browser.find_element(By.XPATH, "//select[@name='selProductSeries']").find_elements(By.TAG_NAME, "option")
-        for pS_option in productSeries_list:
-            if pS_option.get_attribute("class") != "psLess" and pS_option.get_attribute("class") != "psBothHead" and pS_option.get_attribute("class") != "psAll":
-                pS_option.click()
+            # Navigating through GC Series
+            productSeries_list = browser.find_element(By.XPATH, "//select[@name='selProductSeries']").find_elements(By.TAG_NAME, "option")
+            for pS_option in productSeries_list:
+                if pS_option.get_attribute("class") != "psLess" and pS_option.get_attribute("class") != "psBothHead" and pS_option.get_attribute("class") != "psAll":
+                    pS_option.click()
 
-                # Navigating through GC Family
-                if browser.find_element(By.XPATH, "//tr[@id='trProductFamily']").is_displayed():
-                    productFamily_list = browser.find_element(By.XPATH, "//select[@name='selProductFamily']").find_elements(By.TAG_NAME, "option")
-                    for pF_option in productFamily_list:
+                    # Navigating through GC Family
+                    if browser.find_element(By.XPATH, "//tr[@id='trProductFamily']").is_displayed():
+                        productFamily_list = browser.find_element(By.XPATH, "//select[@name='selProductFamily']").find_elements(By.TAG_NAME, "option")
+                        for pF_option in productFamily_list:
 
-                        # Specific graphic card
-                        if pF_option.get_attribute("text").strip() == gCard.family:
-                            pF_option.click()
+                            # Specific graphic card
+                            if pF_option.get_attribute("text").strip() == gCard.family:
+                                pF_option.click()
 
-                            # Saving Graphic Card path
-                            saveGraphicCard_path(pST_option.get_attribute("text"), pS_option.get_attribute("text"), pF_option.get_attribute("text"))
+                                # Saving Graphic Card path
+                                saveGraphicCard_path(pST_option.get_attribute("text"), pS_option.get_attribute("text"), pF_option.get_attribute("text"))
 
-                            gCard = get_newDriver(browser, gCard)
-                            return gCard
+                                gCard = get_newDriver(browser, gCard)
+
+                                print("[SUCCESS] Looking for new drivers to your NVIDIA graphic card")
+                                return gCard
+                    else:
+                        print("[FAILURE] Looking for new drivers to your NVIDIA graphic card")
+                        return "no-support"
+    except:
+        print("[FAILURE] Looking for new drivers to your NVIDIA graphic card")
+        return "unknown-error"
                             
 def get_newDriver(browser: webdriver.Firefox, gCard: graphicCard):
     driver_availableToLinux = False
