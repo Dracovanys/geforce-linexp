@@ -1,19 +1,22 @@
-from lib2to3.pgen2 import driver
 from functions.check_update import *
 
 # Check network connection
-print("Checking connection with NVIDIA official website...", end="")
+print("Checking connection with NVIDIA official website... ", end="")
 if ping_nvidia_website() == "ERROR":
     quit()
 
+# Start Firefox browser
+print("Opening browser to navigate in NVIDIA official website... ", end="")
+browser = start_browser()
+
 # Search for new drivers
 if os.path.exists(os.getcwd()[:os.getcwd().find("/geforce") + 15] + "/data/gCard.json"):
-    print("Looking for new drivers to your NVIDIA graphic card...", end="")
-    graphicCardDriver = find_graphicCardDriver()
+    print("Looking for new drivers to your NVIDIA graphic card... ", end="")
+    graphicCardDriver = find_graphicCardDriver(browser)
 
 else:
-    print("Looking for new drivers to your NVIDIA graphic card...", end="")
-    graphicCardDriver = find_graphicCardDriver_noSaveData()
+    print("Looking for new drivers to your NVIDIA graphic card... ", end="")
+    graphicCardDriver = find_graphicCardDriver_noSaveData(browser)
 
 if graphicCardDriver == "no-linux-driver":
     print("OK\n\nThere isn't drivers of your NVIDIA Graphic Card available for Linux OS.")
