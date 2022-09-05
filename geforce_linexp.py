@@ -8,28 +8,28 @@ browser = start_browser()
 
 # Search for new drivers
 if os.path.exists(os.getcwd()[:os.getcwd().find("/geforce") + 15] + "/data/gCard.json"):
-    graphicCardDriver = find_graphicCardDriver(browser)
+    gCard = find_graphicCardDriver(browser)
 
 else:
-    graphicCardDriver = find_graphicCardDriver_noSaveData(browser)
+    gCard = find_graphicCardDriver_noSaveData(browser)
 
-if graphicCardDriver == "no-linux-driver":
+if gCard == "no-linux-driver":
     print("\nThere isn't drivers of your NVIDIA Graphic Card available for Linux OS.")
-elif graphicCardDriver == "up-to-date":
+elif gCard == "up-to-date":
     print("\nYour NVIDIA Graphic Card is up-to-date.")
-elif graphicCardDriver == "no-support":
+elif gCard == "no-support":
     print("\nUnfortunately, this tool can't work with your NVIDIA Graphic Card yet.")
-elif graphicCardDriver == "unknown-error":
+elif gCard == "unknown-error":
     print("\nAn unknown error occurred, please restart execution.\nNOTE: If error persists, please give the details on GitHub repository: https://github.com/Dracovanys/geforce-linexp")
 else:
-    print(f"\nNew driver available (Current: {graphicCardDriver.curVersion} / New: {graphicCardDriver.newVersion}) for your {graphicCardDriver.family}!")
+    print(f"\nNew driver available (Current: {gCard.curVersion} / New: {gCard.newVersion}) for your {gCard.family}!")
 
     # Request to download
     invalid_option = True
     while invalid_option:
         download_option = input("Do you want to download it [y/n]? ")
         if download_option == "y":
-                driverFile = download_graphicCardDriver(graphicCardDriver)
+                driverFile = download_graphicCardDriver(gCard)
                 invalid_option = False
         elif download_option == "n":
             quit()

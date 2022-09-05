@@ -1,4 +1,5 @@
 beautifulsoup4==4.11.1
+desktop_notify==1.3.3
 igpu==0.1.2
 ping3==4.0.3
 requests==2.22.0
