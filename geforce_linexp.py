@@ -7,7 +7,7 @@ ping_nvidia_website()
 browser = start_browser()
 
 # Search for new drivers
-if os.path.exists(os.getcwd()[:os.getcwd().find("/geforce") + 15] + "/data/gCard.json"):
+if os.path.exists(get_rootFolder() + "/data/gCard.json"):
     gCard = find_graphicCardDriver(browser)
 
 else:
