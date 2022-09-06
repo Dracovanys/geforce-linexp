@@ -2,6 +2,7 @@ import igpu
 import os
 import json
 import requests
+import pynvml
 import wget
 from ping3 import ping
 from bs4 import BeautifulSoup
@@ -20,22 +21,25 @@ class graphicCard:
         for num in igpu.nvidia_driver_version():
             if len(self.curVersion) < 1:
                 self.curVersion += str(num)
-            else: self.curVersion += f".{str(num)}"
+            else: self.curVersion += f".{str(num)}"        
 
 def get_rootFolder():
     return os.path.abspath(__file__)[:os.path.abspath(__file__).find("/geforce") + 15]
 
-def ping_nvidia_website():
+def ping_nvidia_website(execType: str= None):
     try:
         pingResult = ping("www.nvidia.com")
         if pingResult == None or pingResult == False:
-            print("[FAILURE] Checking connection with NVIDIA official website")
+            if execType != "dev":
+                print("[FAILURE] Checking connection with NVIDIA official website")
             quit()
         else:
-            print("[SUCCESS] Checking connection with NVIDIA official website")
+            if execType != "dev":
+                print("[SUCCESS] Checking connection with NVIDIA official website")
             return
     except:
-        print("[FAILURE] Checking connection with NVIDIA official website")
+        if execType != "dev":
+            print("[FAILURE] Checking connection with NVIDIA official website")
         quit()
 
 def get_driverDownloadPage():
@@ -48,14 +52,17 @@ def get_driverDownloadPage():
         elif link == graphicCard_website.find_all("a")[-1]:
             print("ERROR")
 
-def start_browser():
+def start_browser(execType: str= None):
     options = Options()
     options.add_argument('--headless')
     browser = webdriver.Firefox(options=options)
     browser.get(get_driverDownloadPage())
-    return browser
+    if execType == "dev":
+        browser.close()
+    else:
+        return browser
 
-def find_graphicCardDriver(browser: webdriver.Firefox):
+def find_graphicCardDriver(browser: webdriver.Firefox, execType: str= None):
     try:
         gCard = graphicCard()
 
@@ -82,13 +89,17 @@ def find_graphicCardDriver(browser: webdriver.Firefox):
 
         gCard = get_newDriver(browser, gCard)
 
-        print("[SUCCESS] Looking for new drivers to your NVIDIA graphic card")
+        if execType != "dev":
+            print("[SUCCESS] Looking for new drivers to your NVIDIA graphic card")
         return gCard
+    except pynvml.NVMLError:
+            return "NVMLError"
     except:
-        print("[FAILURE] Looking for new drivers to your NVIDIA graphic card")
+        if execType != "dev":
+            print("[FAILURE] Looking for new drivers to your NVIDIA graphic card")        
         quit()
 
-def find_graphicCardDriver_noSaveData(browser: webdriver.Firefox):
+def find_graphicCardDriver_noSaveData(browser: webdriver.Firefox, execType: str= None):
     try:
         gCard = graphicCard()
 
@@ -117,13 +128,18 @@ def find_graphicCardDriver_noSaveData(browser: webdriver.Firefox):
 
                                 gCard = get_newDriver(browser, gCard)
 
-                                print("[SUCCESS] Looking for new drivers to your NVIDIA graphic card")
+                                if execType != "dev":
+                                    print("[SUCCESS] Looking for new drivers to your NVIDIA graphic card")
                                 return gCard
                     else:
-                        print("[FAILURE] Looking for new drivers to your NVIDIA graphic card")
-                        return "no-support"
+                        if execType != "dev":
+                            print("[FAILURE] Looking for new drivers to your NVIDIA graphic card")
+                        return "no-support"    
+    except pynvml.NVMLError:
+            return "NVMLError"
     except:
-        print("[FAILURE] Looking for new drivers to your NVIDIA graphic card")
+        if execType != "dev":
+            print("[FAILURE] Looking for new drivers to your NVIDIA graphic card")
         return "unknown-error"
                             
 def get_newDriver(browser: webdriver.Firefox, gCard: graphicCard):
@@ -147,7 +163,7 @@ def get_newDriver(browser: webdriver.Firefox, gCard: graphicCard):
             return "up-to-date"
         else:
             gCard.newDriverPath = newDriver_path
-            gCard.newVersion = driverVersion[:7]
+            gCard.newVersion = driverVersion[:driverVersion.find(".", 4)]
             return gCard
     else:
         browser.close()

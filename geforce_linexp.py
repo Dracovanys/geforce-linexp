@@ -21,6 +21,8 @@ elif gCard == "no-support":
     print("\nUnfortunately, this tool can't work with your NVIDIA Graphic Card yet.")
 elif gCard == "unknown-error":
     print("\nAn unknown error occurred, please restart execution.\nNOTE: If error persists, please give the details on GitHub repository: https://github.com/Dracovanys/geforce-linexp")
+elif gCard == "NVMLError":
+    print("\nNVIDIA Graphic Card verification failed, follow this instructions to solve: https://www.murhabazi.com/install-nvidia-driver")
 else:
     print(f"\nNew driver available (Current: {gCard.curVersion} / New: {gCard.newVersion}) for your {gCard.family}!")
 

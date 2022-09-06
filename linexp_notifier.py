@@ -60,3 +60,5 @@ if type(gCard) != str:
         asyncio.run(notify_user(f"New driver available for your {gCard.family} ({gCard.newVersion})."))
 elif gCard == "up-to-date" and notifierOp_json["show-no-new-drivers-notification"] == "True":
     asyncio.run(notify_user("No new drivers available for your NVIDIA Graphic Card."))
+elif gCard == "NVMLError":
+    asyncio.run("Problem detected on your Graphic Card driver. Please run geforce_linexp.py for more details.")

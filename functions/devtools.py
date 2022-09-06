@@ -1,5 +1,6 @@
 from logging.config import valid_ident
 from check_update import *
+import sys
 
 def get_platforms():
     browser = webdriver.Firefox()
@@ -32,3 +33,48 @@ def get_platforms():
                             print(pl_option.get_attribute("text"))
                             avl_platforms.append(pl_option.get_attribute("text"))
     browser.close()
+
+
+if len(sys.argv) < 2:    
+    try:
+        ping_nvidia_website("dev")
+        print("[SUCCESS] ping_nvidia_website")
+    except:
+        print("[FAILURE] ping_nvidia_website")
+    
+    try:
+        browser = start_browser("dev")
+        print("[SUCCESS] start_browser")
+    except:
+        print("[FAILURE] start_browser")
+
+    try:
+        gCard = find_graphicCardDriver(browser, "dev")
+        print("[SUCCESS] find_graphicCardDriver")
+    except:
+        print("[FAILURE] find_graphicCardDriver")
+
+    try:
+        gCard = find_graphicCardDriver_noSaveData(browser, "dev")
+        print("[SUCCESS] find_graphicCardDriver_noSaveData")
+    except:
+        print("[FAILURE] find_graphicCardDriver_noSaveData")
+else:
+    if sys.argv[1] == "ping_nvidia_website":
+        ping_nvidia_website()
+    elif sys.argv[1] == "start_browser":
+        browser = start_browser()
+    elif sys.argv[1] == "find_graphicCardDriver":
+        gCard = find_graphicCardDriver(start_browser(), "dev")
+    elif sys.argv[1] == "find_graphicCardDriver_noSaveData":
+        gCard = find_graphicCardDriver_noSaveData(start_browser())
+    elif sys.argv[1] == "get_platforms":
+        get_platforms()
+
+
+    
+
+    
+
+
+
