@@ -12,10 +12,9 @@ async def notify_user(message: str):
         print("[ERROR] Send notification to user")
 
 def notifierOptionsJson_create():
-    root = os.getcwd()[:os.getcwd().find("/geforce") + 15]
 
-    if not os.path.exists(root + "/data"):
-        os.mkdir(root + "/data")
+    if not os.path.exists(get_rootFolder() + "/data"):
+        os.mkdir(get_rootFolder() + "/data")
 
     options = {
         "download-now" : "False",
@@ -25,7 +24,7 @@ def notifierOptionsJson_create():
     options_json = json.dumps(options, indent=2)
 
 
-    with open(root + "/data/notifierOptions.json", "w") as jsonFile:
+    with open(get_rootFolder() + "/data/notifierOptions.json", "w") as jsonFile:
         jsonFile.write(options_json)
 
 # Check network connection
@@ -35,18 +34,18 @@ ping_nvidia_website()
 browser = start_browser()
 
 # Search for new drivers
-if os.path.exists(os.getcwd()[:os.getcwd().find("/geforce") + 15] + "/data/gCard.json"):
+if os.path.exists(get_rootFolder() + "/data/gCard.json"):
     gCard = find_graphicCardDriver(browser)
 
 else:
     gCard = find_graphicCardDriver_noSaveData(browser)
 
 # Check if notification options file exists
-if not os.path.exists(os.getcwd()[:os.getcwd().find("/geforce") + 15] + "/data/notifierOptions.json"):
+if not os.path.exists(get_rootFolder() + "/data/notifierOptions.json"):
     notifierOptionsJson_create()
 
 # Get notification options
-with open(os.getcwd()[:os.getcwd().find("/geforce") + 15] + "/data/notifierOptions.json", "r") as notifierOp_jsonFile:
+with open(get_rootFolder() + "/data/notifierOptions.json", "r") as notifierOp_jsonFile:
     notifierOp_json = json.load(notifierOp_jsonFile)
 
 # Start to send notifications based on options

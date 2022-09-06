@@ -22,6 +22,9 @@ class graphicCard:
                 self.curVersion += str(num)
             else: self.curVersion += f".{str(num)}"
 
+def get_rootFolder():
+    return os.path.abspath(__file__)[:os.path.abspath(__file__).find("/geforce") + 15]
+
 def ping_nvidia_website():
     try:
         pingResult = ping("www.nvidia.com")
@@ -54,11 +57,9 @@ def start_browser():
 
 def find_graphicCardDriver(browser: webdriver.Firefox):
     try:
-        root = os.getcwd()[:os.getcwd().find("/geforce") + 15]
-
         gCard = graphicCard()
 
-        with open(root + "/data/gCard.json", "r") as gCard_jsonFile:
+        with open(get_rootFolder() + "/data/gCard.json", "r") as gCard_jsonFile:
             gCard_json = json.load(gCard_jsonFile)
 
         # Selecting GC Series Type
@@ -153,10 +154,8 @@ def get_newDriver(browser: webdriver.Firefox, gCard: graphicCard):
         return "no-linux-driver"
 
 def saveGraphicCard_path(pSeriesType, pSeries, pFamily):
-    root = os.getcwd()[:os.getcwd().find("/geforce") + 15]
-
-    if not os.path.exists(root + "/data"):
-        os.mkdir(root + "/data")
+    if not os.path.exists(get_rootFolder() + "/data"):
+        os.mkdir(get_rootFolder() + "/data")
 
     graphicCard_info = {
         "seriesType" : pSeriesType,
@@ -167,33 +166,29 @@ def saveGraphicCard_path(pSeriesType, pSeries, pFamily):
     graphicCard_info_json = json.dumps(graphicCard_info, indent=3)
 
 
-    with open(root + "/data/gCard.json", "w") as jsonFile:
+    with open(get_rootFolder() + "/data/gCard.json", "w") as jsonFile:
         jsonFile.write(graphicCard_info_json)
 
 def download_graphicCardDriver(gCard: graphicCard):
-    root = os.getcwd()[:os.getcwd().find("/geforce") + 15]
-
-    if not os.path.exists(root + "/downloads"):
-        os.mkdir(root + "/downloads")        
+    if not os.path.exists(get_rootFolder() + "/downloads"):
+        os.mkdir(get_rootFolder() + "/downloads")        
     
     gCard_downloadedFileName = gCard.family.replace(" ", "-") + "_" + gCard.newVersion.replace(".", "-") + ".run"
 
-    if os.path.exists(root + "/downloads/" + gCard_downloadedFileName):
+    if os.path.exists(get_rootFolder() + "/downloads/" + gCard_downloadedFileName):
         print("\nYou have already downloaded new graphic driver!")
         return gCard_downloadedFileName
     else:
         print(f"\nDownloading newest driver ({gCard.newVersion}) for your {gCard.family}...")
-        wget.download(gCard.newDriverPath, root + "/downloads/" + gCard_downloadedFileName)
+        wget.download(gCard.newDriverPath, get_rootFolder() + "/downloads/" + gCard_downloadedFileName)
         print("")
 
-        if os.path.exists(root + "/downloads/" + gCard_downloadedFileName):
+        if os.path.exists(get_rootFolder() + "/downloads/" + gCard_downloadedFileName):
             print("Download complete. ", end="")
             return gCard_downloadedFileName
         else:
             return "download-fail"
 
 def install_graphicCardDriver(driverFile):
-    root = os.getcwd()[:os.getcwd().find("/geforce") + 15]
-
     os.system(f"sudo ./downloads/{driverFile}")
 
