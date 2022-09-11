@@ -1,8 +1,13 @@
-from logging.config import valid_ident
-from check_update import *
+from functions.check_update import *
 import sys
 
 def get_platforms():
+
+    '''
+    This function is used to get all platforms
+    that NVIDIA have created drivers.
+    '''
+
     browser = webdriver.Firefox()
     browser.get(get_driverDownloadPage())
 
@@ -33,7 +38,6 @@ def get_platforms():
                             print(pl_option.get_attribute("text"))
                             avl_platforms.append(pl_option.get_attribute("text"))
     browser.close()
-
 
 if len(sys.argv) < 2:    
     try:

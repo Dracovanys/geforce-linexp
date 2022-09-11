@@ -4,6 +4,7 @@ import json
 import requests
 import pynvml
 import wget
+import datetime
 from ping3 import ping
 from bs4 import BeautifulSoup
 from selenium import webdriver
@@ -26,7 +27,20 @@ class graphicCard:
 def get_rootFolder():
     return os.path.abspath(__file__)[:os.path.abspath(__file__).find("/geforce") + 15]
 
+def log(message:str):
+    with open(get_rootFolder() + "/data/log.txt", "a") as log_file:
+        today = datetime.datetime.now()
+
+        log_file.write(f"[{today.day}/{today.month}/{today.year} {today.hour}:{today.minute}:{today.second}] {message}\n")
+        print("\n" + message)
+
 def ping_nvidia_website(execType: str= None):
+
+    '''
+    Used to check if network connection
+    is appropriate to start verification.
+    '''
+
     try:
         pingResult = ping("www.nvidia.com")
         if pingResult == None or pingResult == False:
@@ -43,6 +57,13 @@ def ping_nvidia_website(execType: str= None):
         quit()
 
 def get_driverDownloadPage():
+
+    '''
+    Navigate on NVIDIA website's home
+    to get proper Drivers Webpage according to
+    computer's location
+    '''
+
     graphicCard_website = BeautifulSoup(requests.get("https://www.nvidia.com/").text, "html.parser")            
 
     # Find path to download driver page

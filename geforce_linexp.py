@@ -14,17 +14,17 @@ else:
     gCard = find_graphicCardDriver_noSaveData(browser)
 
 if gCard == "no-linux-driver":
-    print("\nThere isn't drivers of your NVIDIA Graphic Card available for Linux OS.")
+    log("There isn't drivers of your NVIDIA Graphic Card available for Linux OS.")
 elif gCard == "up-to-date":
-    print("\nYour NVIDIA Graphic Card is up-to-date.")
+    log("Your NVIDIA Graphic Card is up-to-date.")
 elif gCard == "no-support":
-    print("\nUnfortunately, this tool can't work with your NVIDIA Graphic Card yet.")
+    log("Unfortunately, this tool can't work with your NVIDIA Graphic Card yet.")
 elif gCard == "unknown-error":
-    print("\nAn unknown error occurred, please restart execution.\nNOTE: If error persists, please give the details on GitHub repository: https://github.com/Dracovanys/geforce-linexp")
+    log("An unknown error occurred, please restart execution.\nNOTE: If error persists, please give the details on GitHub repository: https://github.com/Dracovanys/geforce-linexp")
 elif gCard == "NVMLError":
-    print("\nNVIDIA Graphic Card verification failed, follow this instructions to solve: https://www.murhabazi.com/install-nvidia-driver")
+    log("NVIDIA Graphic Card verification failed, follow this instructions to solve: https://www.murhabazi.com/install-nvidia-driver")
 else:
-    print(f"\nNew driver available (Current: {gCard.curVersion} / New: {gCard.newVersion}) for your {gCard.family}!")
+    log(f"New driver available (Current: {gCard.curVersion} / New: {gCard.newVersion}) for your {gCard.family}!")
 
     # Request to download
     invalid_option = True
