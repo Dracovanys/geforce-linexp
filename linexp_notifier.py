@@ -8,6 +8,7 @@ async def notify_user(message: str):
         notification.set_timeout(10000)
         await notification.show()
         print("[SUCCESS] Send notification to user")
+        log(message)
     except:
         print("[ERROR] Send notification to user")
 
