@@ -20,14 +20,14 @@ git clone https://github.com/Dracovanys/geforce-linexp.git
 
 Install dependencies:
 ```
-pip3 install -r requirements.txt
+pip install -r requirements.txt
 ```
 
 ## Usage
 
-On terminal, execute "geforce_linexp.py" python file:
+On terminal, execute "app-term.py" python file:
 ```
-python3 geforce_linexp.py
+python3 app-term.py
 ```
 And wait for all verification steps complete their work.
 
@@ -37,7 +37,7 @@ During this process, GeForce Linexp should give the following (not exactly) resp
  - Your NVIDIA Graphic Card is up-to-date.
  - There is a new driver for your NVIDIA Graphic Card. (And start the process to download it and install it)
  - There isn't a Linux driver for your NVIDIA Graphic Card. (Very sad...)
- - This tool can't search drivers for your NVIDIA Graphic Card.
+ - This tool can't search drivers for your NVIDIA Graphic Card. (Too very sad...)
 
 ### Executing GeForce Linexp on background (startup)
 
