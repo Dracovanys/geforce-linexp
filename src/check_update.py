@@ -84,6 +84,12 @@ def start_browser(execType: str= None):
         return browser
 
 def find_graphicCardDriver(browser: webdriver.Firefox, execType: str= None):
+
+    '''
+    Search for new drivers do Graphic Card
+    based on storage data.
+    '''
+
     try:
         gCard = graphicCard()
 
@@ -121,6 +127,12 @@ def find_graphicCardDriver(browser: webdriver.Firefox, execType: str= None):
         quit()
 
 def find_graphicCardDriver_noSaveData(browser: webdriver.Firefox, execType: str= None):
+
+    '''
+    Get information about Graphic Card and search
+    for new drivers to it.
+    '''
+
     try:
         gCard = graphicCard()
 
@@ -164,6 +176,12 @@ def find_graphicCardDriver_noSaveData(browser: webdriver.Firefox, execType: str=
         return "unknown-error"
                             
 def get_newDriver(browser: webdriver.Firefox, gCard: graphicCard):
+
+    '''
+    Navigate into download page to check if
+    current installed driver version is the last one.
+    '''
+
     driver_availableToLinux = False
     for operationSys in browser.find_element(By.XPATH, "//select[@id='selOperatingSystem']").find_elements(By.TAG_NAME, "option"):
         if operationSys.get_attribute("text").strip() == "Linux 64-bit":
@@ -191,6 +209,11 @@ def get_newDriver(browser: webdriver.Firefox, gCard: graphicCard):
         return "no-linux-driver"
 
 def saveGraphicCard_path(pSeriesType, pSeries, pFamily):
+
+    '''
+    Save data from Graphic Card
+    '''
+
     if not os.path.exists(get_rootFolder() + "/data"):
         os.mkdir(get_rootFolder() + "/data")
 

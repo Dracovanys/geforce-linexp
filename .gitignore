@@ -1,5 +1,5 @@
-functions/geckodriver.log
-functions/__pycache__/*
+src/geckodriver.log
+src/__pycache__/*
 geckodriver.log
 data/*
 downloads/*

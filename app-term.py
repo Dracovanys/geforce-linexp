@@ -1,4 +1,4 @@
-from functions.check_update import *
+from src.check_update import *
 
 # Check network connection
 ping_nvidia_website()

@@ -1,4 +1,4 @@
-from functions.check_update import *
+from src.check_update import *
 import sys
 
 def get_platforms():
