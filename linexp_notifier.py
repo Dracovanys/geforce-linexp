@@ -1,6 +1,6 @@
 import asyncio
 import desktop_notify
-from functions.check_update import *
+from src.check_update import *
 
 async def notify_user(message: str):
     try:
